@@ -1,3 +1,16 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+//funçao que imprime a fila.
+//METODOS FILA.SIZE, FILA.PUSH, FILA.POP, FILA.FRONT, FILA.BACK
+void imprime_fila(queue<int> fila){
+    for(int i = fila.front(); i < fila.size();i++){
+        printf("%d",i);
+    }
+}
+
 #include <stdio.h>
 
 int main(int argc, char *argv[]){
@@ -7,6 +20,7 @@ int main(int argc, char *argv[]){
     char Linha[100];
     char *result;
     FILE *arqSaida;
+    queue<int> fila; //CRIA A FILA, PARA ENVIAR A FILA É SÓ O NOME.
     
 
     nomeUm = argv[1];
@@ -35,7 +49,19 @@ int main(int argc, char *argv[]){
 
 
     //implementar a impressão no arquivo de saida RESULTADO
+       
+	
+	
+   
+   
+	
 
      fclose(arq);
      //fclose(arqSaida);
 }
+
+
+
+ 
+
+ 
