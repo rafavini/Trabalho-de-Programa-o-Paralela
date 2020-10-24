@@ -1,5 +1,18 @@
 #include <stdio.h>
 
+void espancao(char *info){
+    int i=0;
+
+    while(info[i] != '\0'){
+        if(info[i] == ' '){
+            i++;
+        }
+        printf("TESTE VET: %c\n", info[i]);
+        i++;
+    }
+}
+
+
 int main(int argc, char *argv[]){
     FILE *arq;
     char *nomeUm; //arquivo entrada
@@ -46,13 +59,9 @@ int main(int argc, char *argv[]){
         }
     }
 
-    int g=0;
-    while(vetInfo[g] != '\0'){
-        printf("\n%c iteracao = %d\n", vetInfo[g], g); //imprime os dados retirados do arquivo
-        g++;
-    }
-    
+
     //0BS: chamar o alg
+    espancao(vetInfo);
     
 
     //implementar a impressão no arquivo de saida RESULTADO
