@@ -12,7 +12,7 @@ void imprime_fila(queue<int> fila){
     }
 }
 
-void espancao(char *info){
+void expansao(char *info){
     int i=0;
     int j=0;
     int obstaculo = info[6]; //ARMAZENA QUANTIDADE DE OBSTACULOS info[6] 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
         printf("posição[%d] = %d\n",i,vetInfo[i]);
     }
     //0BS: chamar o alg
-    //espancao(vetInfo);
+    //expansao(vetInfo);
     
     //implementar a impressão no arquivo de saida RESULTADO
 
