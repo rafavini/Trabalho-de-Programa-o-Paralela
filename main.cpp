@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <iostream>
 #include <queue>
 
@@ -11,7 +12,18 @@ void imprime_fila(queue<int> fila){
     }
 }
 
-#include <stdio.h>
+void espancao(char *info){
+    int i=0;
+
+    while(info[i] != '\0'){
+        if(info[i] == ' '){
+            i++;
+        }
+        printf("TESTE VET: %c\n", info[i]);
+        i++;
+    }
+}
+
 
 int main(int argc, char *argv[]){
     FILE *arq;
@@ -21,6 +33,9 @@ int main(int argc, char *argv[]){
     char *result;
     FILE *arqSaida;
     queue<int> fila; //CRIA A FILA, PARA ENVIAR A FILA É SÓ O NOME.
+
+   int vetInfo[100]; //vetor com os dados do arquivo
+
     
 
     nomeUm = argv[1];
@@ -31,37 +46,25 @@ int main(int argc, char *argv[]){
     //arqSaida = fopen(nomeDois, "wt");
     
     if(arq == NULL){
-        printf("PROBLEMA\n");
+        printf("PROBLEMA PARA ABRIR O ARQUIVO!\n");
         return 0;
     }
 
+    int j=0;
     int i = 1;
+    
     while (!feof(arq))
-    {
-	    // Lê uma linha (inclusive com o '\n')
-        result = fgets(Linha, 100, arq);  // o 'fgets' lê até 99 caracteres ou até o '\n'
-        if (result)  // Se foi possível ler
-	    printf("Linha %d : %s\n",i,Linha);
-        i++;
+    { 
+       fscanf(arq,"%d",&vetInfo[j]); //Le o arquivo e adiciona para o vetor já tranformado para int
+       j++;
     }
-
-    //chamar o alg
-
-
+    for(int i =0; i < j;i++){
+        printf("posição[%d] = %d\n",i,vetInfo[i]);
+    }
+    //0BS: chamar o alg
+    //espancao(vetInfo);
     //implementar a impressão no arquivo de saida RESULTADO
-       
-	
-	
-   
-   
-	
 
      fclose(arq);
      //fclose(arqSaida);
 }
-
-
-
- 
-
- 
