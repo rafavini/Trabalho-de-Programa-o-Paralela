@@ -6,6 +6,16 @@
 
 using namespace std;
 
+struct celula{
+    int i;
+    int j;
+};
+
+struct novo{
+    celula cel;
+    int distancia;
+};
+
 //funçao que imprime a fila.
 //METODOS FILA.SIZE, FILA.PUSH, FILA.POP, FILA.FRONT, FILA.BACK
 void imprime_fila(queue<int> fila){
@@ -16,11 +26,12 @@ void imprime_fila(queue<int> fila){
 }
 
 
+
 int main(int argc, char *argv[]){
     FILE *arq;
     char *nomeUm; //arquivo entrada
     char *nomeDois; //arquivo saida
-    char Linha[100];
+    //char Linha[100];
     char *result;
     FILE *arqSaida;
     int aux2=0;
@@ -29,9 +40,6 @@ int main(int argc, char *argv[]){
     
 
    int vetInfo[100]; //vetor com os dados do arquivo
-   
-
-    
 
     nomeUm = argv[1];
     nomeDois = argv[2];
@@ -53,7 +61,7 @@ int main(int argc, char *argv[]){
     }
 
     int grid[vetInfo[0]][vetInfo[1]]; // criar o grid com o tamanho de pos 0 e pos 1 no vetor;
-    grid[vetInfo[2]][vetInfo[3]] = 0; //COLOCANDO 0 NA ORIGEM
+     
 
     //COLOCANDO O MAXIMO INTEIRO POSSIVEL NA MATRIZ 
      for(int t=0; t < vetInfo[0];t++){
@@ -61,6 +69,7 @@ int main(int argc, char *argv[]){
             grid[t][v] = INT_MAX;
         }
     }
+    grid[vetInfo[2]][vetInfo[3]] = 0;//COLOCANDO 0 NA ORIGEM
     
     
     int obstaculo = vetInfo[6];//pega a quantidade de obstaculo do vetor;
@@ -75,10 +84,6 @@ int main(int argc, char *argv[]){
     pos_lin = 9;
     col = vetInfo[10];
     pos_col = 10;
-
-    
-    
-
 
     // COLOCANDO OS OBSTACULOS NA MATRIZ
     while(aux < obstaculo){
@@ -133,16 +138,77 @@ int main(int argc, char *argv[]){
     }
     */
 
+   //EXPANSÃO
+   int teste=0;
+   celula origem,destino;//CRIANDO ORIGEM E DESTINO COM CAMPOS I E J
+   //VETORES PARA CORRER NAS DIREÇÕES
+   int l[] = {-1,0,0,1}; 
+   int c[] = {0,-1,1,0};
+   queue<novo> q; // CRIANDO UMA FILA ONDE CADA POSIÇÃO TEM I E J
+   //CARREGANDO OS CAMPO I,J DA ORIGEM E DESTINO
+   origem.i = vetInfo[2];
+   origem.j = vetInfo[3];
+   destino.i = vetInfo[4];
+   destino.j = vetInfo[5]; 
+   //CARREGANDO O CAMPO CEL DA STRUCT NOVO COM OS INDICE I E J DA ORIGEM
+   novo s = {origem}; 
+   //COLOCANDO ELA NA PILHA
+   q.push(s);
+ 
+
+   while(!q.empty() && achou == false){
+       novo curr = q.front();//PEGANDO O INDICE I E J DA ORIGEM E DAS POSIÇÕES ADJACENTES
+       celula pt = curr.cel; //COLOCA ESSE INDICE EM PT PARA FAZER VERIFICAÇÃO
+        //VERIFICAÇÃO DOS INDICES ATUAIS COM O DESTINO
+        if(pt.i == destino.i && pt.j == destino.j){
+            achou = true;
+            teste = curr.distancia;
+        }
+        q.pop();//TIRA ELE DA FILA POR CAUSA QUE JÁ VISITO
+        //LAÇO PARA CRIAR OS ADJACENTES
+        for(int u = 0; u < 4; u++){
+            int linha = pt.i + l[u];
+            int coluna = pt.j + c[u];
+
+            if(grid[linha][coluna] == INT_MAX){
+                grid[linha][coluna] = curr.distancia + 1;//MARCA NO GRID AS EXPANSÃO
+                novo adjacente = {{linha,coluna}, curr.distancia + 1};//CRIA O ADJACENTE COM AS POSIÇÕES CORRETAS
+                q.push(adjacente);//COLOCA ELE NA FILA 
+            }
+        }
+   }
+   //BACKTRACKING
+   /*
+     novo t = {destino};
+    queue<novo> caminho;
+    caminho.push(t);
+   if(achou){
+      
+       while(destino.i != origem.i || destino.j != origem.j){
+            novo curr = caminho.front();
+            celula pt = curr.cel;
+
+           for(int u = 0; u < 4; u++){
+                int linha = pt.i + l[u];
+                int coluna = pt.j + c[u]; 
+
+                if(grid[linha][coluna] < )
+           }
+
+       }
+   }
+   */
+
+   
     
     
+   printf("TESTE ==== %d",teste);
+
+
+
 
     //0BS: chamar o alg
-    printf("teste\n");
-   fila.push(vetInfo[2]);
-   fila.push(vetInfo[3]);
-    imprime_fila(fila);
-
-    
+   
     //implementar a impressão no arquivo de saida RESULTADO
 
      fclose(arq);
