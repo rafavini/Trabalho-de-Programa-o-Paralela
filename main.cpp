@@ -21,7 +21,6 @@ int main(int argc, char *argv[]){
     FILE *arq;
     char *nomeUm; //arquivo entrada
     char *nomeDois; //arquivo saida
-    //char Linha[100];
     char *result;
     FILE *arqSaida;
     int aux2=0;
@@ -29,7 +28,7 @@ int main(int argc, char *argv[]){
     bool achou = false;
     
 
-   int vetInfo[100]; //vetor com os dados do arquivo
+   int vetInfo[4000]; //vetor com os dados do arquivo
 
     nomeUm = argv[1];
     nomeDois = argv[2];
@@ -118,8 +117,6 @@ int main(int argc, char *argv[]){
         col = vetInfo[pos_col];
      
     }
-  
-
    //EXPANSÃO
 
    int minimo=0;
@@ -142,7 +139,6 @@ int main(int argc, char *argv[]){
    while(!q.empty() && achou == false){
        novo curr = q.front();//PEGANDO O INDICE I E J DA ORIGEM E DAS POSIÇÕES ADJACENTES
        celula pt = curr.cel; //COLOCA ESSE INDICE EM PT PARA FAZER VERIFICAÇÃO
-        //VERIFICAÇÃO DOS INDICES ATUAIS COM O DESTINO
         
         q.pop();//TIRA ELE DA FILA POR CAUSA QUE JÁ VISITO
         //LAÇO PARA CRIAR OS ADJACENTES
@@ -161,6 +157,7 @@ int main(int argc, char *argv[]){
             }
         }
    }
+  
    //BACKTRACKING
  
      novo t = {destino};
@@ -196,10 +193,7 @@ int main(int argc, char *argv[]){
                 if(pt.i == origem.i && pt.j == origem.j){
                 destino.i = origem.i;
                 destino.j = origem.j;
-            }
-                //VERIFICA SE CHEGOU NA ORIGEM
-                
-                
+            }      
                 //VERIFICA SE O ADJACENTE O VALOR É MENOR QUE O ANTERIOR NO GRID E SE NÃO É UM OBSTACULO
                 if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1  ){
                     menor = grid[pt.i][pt.j];
@@ -221,14 +215,16 @@ int main(int argc, char *argv[]){
         caminho.pop();
     }
     
-     for(int t=0; t < vetInfo[0];t++){
+    
+     /*for(int t=0; t < vetInfo[0];t++){
         for(int v =0; v < vetInfo[1];v++){
             printf("%d \t",grid[t][v]);
         }
         printf("\n");
     }
+    */
     
-
+printf("MINIMO = %d",minimo);
    
   //0BS: chamar o alg
    
