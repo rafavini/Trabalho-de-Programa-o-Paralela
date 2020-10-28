@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <queue>
+#include <stack>
 #define MAX 1000
 #define INT_MAX 2147483647
 
@@ -13,7 +14,7 @@ struct celula{
 
 struct novo{
     celula cel;
-    int distancia=1;
+    int distancia;
 };
 
 
@@ -28,14 +29,14 @@ int main(int argc, char *argv[]){
     bool achou = false;
     
 
-   int vetInfo[4000]; //vetor com os dados do arquivo
+   int vetInfo[10000]; //vetor com os dados do arquivo
 
     nomeUm = argv[1];
     nomeDois = argv[2];
 
     printf("nome do arquivo: %s\n", nomeUm);
     arq = fopen(nomeUm, "rt");
-    //arqSaida = fopen(nomeDois, "wt");
+    arqSaida = fopen(nomeDois, "wt");
     
     if(arq == NULL){
         printf("PROBLEMA PARA ABRIR O ARQUIVO!\n");
@@ -131,7 +132,8 @@ int main(int argc, char *argv[]){
    destino.i = vetInfo[4];
    destino.j = vetInfo[5]; 
    //CARREGANDO O CAMPO CEL DA STRUCT NOVO COM OS INDICE I E J DA ORIGEM
-   novo s = {origem}; 
+   novo s = {origem};
+   s.distancia=1; 
    //COLOCANDO ELA NA PILHA
    q.push(s);
  
@@ -206,30 +208,31 @@ int main(int argc, char *argv[]){
            }
        }
    }
+    //INVERTE FILA
+   stack<celula> Stack; 
+    while (!caminho.empty()) { 
+        Stack.push(caminho.front()); 
+        caminho.pop(); 
+    } 
+    while (!Stack.empty()) { 
+        caminho.push(Stack.top()); 
+        Stack.pop(); 
+    }
 
-    //IMPRIME A FILA COM OS INDICE ATÉ A ORIGEM NO MENOR CAMINHO
+   //IMPRIMIR O TAMANHO DO CAMINHO MINIMO 
+   fprintf(arqSaida,"%d\n",minimo);
+
+    //IMPRIME A FILA COM OS INDICE ATÉ A ORIGEM NO MENOR CAMINHO 
     while(!caminho.empty()){
         celula pos = caminho.front();
-        printf("%d %d \n",pos.i,pos.j);
+        fprintf(arqSaida,"%d %d \n",pos.i,pos.j);
         
         caminho.pop();
     }
+
+    fprintf(arqSaida, "%d %d", vetInfo[4], vetInfo[5]);
     
-    
-     /*for(int t=0; t < vetInfo[0];t++){
-        for(int v =0; v < vetInfo[1];v++){
-            printf("%d \t",grid[t][v]);
-        }
-        printf("\n");
-    }
-    */
-    
-printf("MINIMO = %d",minimo);
-   
-  //0BS: chamar o alg
-   
-    //implementar a impressão no arquivo de saida RESULTADO
 
      fclose(arq);
-     //fclose(arqSaida);
+     fclose(arqSaida);
 }
