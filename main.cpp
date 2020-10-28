@@ -13,18 +13,8 @@ struct celula{
 
 struct novo{
     celula cel;
-    int distancia;
+    int distancia=1;
 };
-
-//funçao que imprime a fila.
-//METODOS FILA.SIZE, FILA.PUSH, FILA.POP, FILA.FRONT, FILA.BACK
-void imprime_fila(queue<int> fila){
-    while(!fila.empty()){
-        printf("%d",fila.front());
-        fila.pop();
-    }
-}
-
 
 
 int main(int argc, char *argv[]){
@@ -128,19 +118,11 @@ int main(int argc, char *argv[]){
         col = vetInfo[pos_col];
      
     }
-    //IMPRIMINDO A MATRIZ
-    printf("\n");
-   /*for(int t=0; t < vetInfo[0];t++){
-        for(int v =0; v < vetInfo[1];v++){
-            printf("%d \t",grid[t][v]);
-        }
-        printf("\n");
-    }
-    */
+  
 
    //EXPANSÃO
 
-   int teste=0;
+   int minimo=0;
    celula origem,destino;//CRIANDO ORIGEM E DESTINO COM CAMPOS I E J
    //VETORES PARA CORRER NAS DIREÇÕES
    int l[] = {-1,0,0,1}; 
@@ -161,19 +143,20 @@ int main(int argc, char *argv[]){
        novo curr = q.front();//PEGANDO O INDICE I E J DA ORIGEM E DAS POSIÇÕES ADJACENTES
        celula pt = curr.cel; //COLOCA ESSE INDICE EM PT PARA FAZER VERIFICAÇÃO
         //VERIFICAÇÃO DOS INDICES ATUAIS COM O DESTINO
-        if(pt.i == destino.i && pt.j == destino.j){
-            achou = true;
-            teste = curr.distancia;
-        }
+        
         q.pop();//TIRA ELE DA FILA POR CAUSA QUE JÁ VISITO
         //LAÇO PARA CRIAR OS ADJACENTES
         for(int u = 0; u < 4; u++){
             int linha = pt.i + l[u];
             int coluna = pt.j + c[u];
 
-            if(grid[linha][coluna] == INT_MAX){
-                grid[linha][coluna] = curr.distancia + 1;//MARCA NO GRID AS EXPANSÃO
-                novo adjacente = {{linha,coluna}, curr.distancia + 1};//CRIA O ADJACENTE COM AS POSIÇÕES CORRETAS
+            if(linha == destino.i && coluna == destino.j){
+            achou = true;
+            minimo = curr.distancia;
+        }
+            if(grid[linha][coluna] == INT_MAX  ){
+                grid[linha][coluna] = curr.distancia ;//MARCA NO GRID AS EXPANSÃO
+                novo adjacente = {{linha,coluna}, curr.distancia + 1};//CRIA O ADJACENTE COM AScler POSIÇÕES CORRETAS
                 q.push(adjacente);//COLOCA ELE NA FILA 
             }
         }
@@ -183,6 +166,7 @@ int main(int argc, char *argv[]){
      novo t = {destino};
     queue<novo> u;
     queue<celula> caminho;
+    int menor,menor1;//VARIAVEIS PARA COMPARAÇÃO PARA SABER QUEM DEVE IR PARA FILA
    
 
     u.push(t);
@@ -190,46 +174,62 @@ int main(int argc, char *argv[]){
        while(destino.i != origem.i || destino.j != origem.j){
             novo curr = u.front();
             celula pt = curr.cel;
-            caminho.push(pt);//COLOCA NA FILA OS INDICE I E J 
 
-            //VERIFICA SE CHEGOU NA ORIGEM
-            if(pt.i == origem.i && pt.j == origem.j){
-                destino.i = origem.i;
-                destino.j = origem.j;
+            menor1= grid[pt.i][pt.j];
+
+
+            
+            if(menor1 < menor){
+                caminho.push(pt);
             }
-            u.pop();
-            printf("ANTES DO FOR %d%d\n",pt.i,pt.j);
+             
+            
+            //COLOCA NA FILA OS INDICE I E J 
+            //VERIFICA SE CHEGOU NA ORIGEM
+           
+             u.pop();
+
            for(int v = 0; v < 4; v++){
                 int linha = pt.i + l[v];
                 int coluna = pt.j + c[v]; 
-                //printf("%d < %d \n",grid[linha][coluna],grid[pt.i][pt.j]);
+
+                if(pt.i == origem.i && pt.j == origem.j){
+                destino.i = origem.i;
+                destino.j = origem.j;
+            }
+                //VERIFICA SE CHEGOU NA ORIGEM
+                
+                
                 //VERIFICA SE O ADJACENTE O VALOR É MENOR QUE O ANTERIOR NO GRID E SE NÃO É UM OBSTACULO
-                if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1){
+                if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1  ){
+                    menor = grid[pt.i][pt.j];
+                    
                     novo adjacente = {{linha,coluna}};
                     u.push(adjacente);
+                    
                 }
                 
            }
-
-
        }
    }
 
-    //IMPRIME A FILA COM OS INDICE DO DESTINO ATÉ A ORIGEM NO MENOR CAMINHO
+    //IMPRIME A FILA COM OS INDICE ATÉ A ORIGEM NO MENOR CAMINHO
     while(!caminho.empty()){
-        celula testa = caminho.front();
-        printf("%d %d \n",testa.i,testa.j);
+        celula pos = caminho.front();
+        printf("%d %d \n",pos.i,pos.j);
         
         caminho.pop();
     }
+    
      for(int t=0; t < vetInfo[0];t++){
         for(int v =0; v < vetInfo[1];v++){
             printf("%d \t",grid[t][v]);
         }
         printf("\n");
     }
+    
 
-   printf("TESTE ==== %d",teste);
+   
   //0BS: chamar o alg
    
     //implementar a impressão no arquivo de saida RESULTADO
