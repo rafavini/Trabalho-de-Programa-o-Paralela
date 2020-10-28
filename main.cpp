@@ -139,6 +139,7 @@ int main(int argc, char *argv[]){
     */
 
    //EXPANSÃO
+
    int teste=0;
    celula origem,destino;//CRIANDO ORIGEM E DESTINO COM CAMPOS I E J
    //VETORES PARA CORRER NAS DIREÇÕES
@@ -178,36 +179,58 @@ int main(int argc, char *argv[]){
         }
    }
    //BACKTRACKING
-   /*
+ 
      novo t = {destino};
-    queue<novo> caminho;
-    caminho.push(t);
+    queue<novo> u;
+    queue<celula> caminho;
+   
+
+    u.push(t);
    if(achou){
-      
        while(destino.i != origem.i || destino.j != origem.j){
-            novo curr = caminho.front();
+            novo curr = u.front();
             celula pt = curr.cel;
+            caminho.push(pt);//COLOCA NA FILA OS INDICE I E J 
 
-           for(int u = 0; u < 4; u++){
-                int linha = pt.i + l[u];
-                int coluna = pt.j + c[u]; 
-
-                if(grid[linha][coluna] < )
+            //VERIFICA SE CHEGOU NA ORIGEM
+            if(pt.i == origem.i && pt.j == origem.j){
+                destino.i = origem.i;
+                destino.j = origem.j;
+            }
+            u.pop();
+            printf("ANTES DO FOR %d%d\n",pt.i,pt.j);
+           for(int v = 0; v < 4; v++){
+                int linha = pt.i + l[v];
+                int coluna = pt.j + c[v]; 
+                //printf("%d < %d \n",grid[linha][coluna],grid[pt.i][pt.j]);
+                //VERIFICA SE O ADJACENTE O VALOR É MENOR QUE O ANTERIOR NO GRID E SE NÃO É UM OBSTACULO
+                if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1){
+                    novo adjacente = {{linha,coluna}};
+                    u.push(adjacente);
+                }
+                
            }
+
 
        }
    }
-   */
 
-   
-    
-    
+    //IMPRIME A FILA COM OS INDICE DO DESTINO ATÉ A ORIGEM NO MENOR CAMINHO
+    while(!caminho.empty()){
+        celula testa = caminho.front();
+        printf("%d %d \n",testa.i,testa.j);
+        
+        caminho.pop();
+    }
+     for(int t=0; t < vetInfo[0];t++){
+        for(int v =0; v < vetInfo[1];v++){
+            printf("%d \t",grid[t][v]);
+        }
+        printf("\n");
+    }
+
    printf("TESTE ==== %d",teste);
-
-
-
-
-    //0BS: chamar o alg
+  //0BS: chamar o alg
    
     //implementar a impressão no arquivo de saida RESULTADO
 
