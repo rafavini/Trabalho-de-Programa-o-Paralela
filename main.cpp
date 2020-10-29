@@ -2,6 +2,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <omp.h>
 #define MAX 1000
 #define INT_MAX 2147483647
 
@@ -19,16 +20,17 @@ struct novo{
 
 
 int main(int argc, char *argv[]){
+
+    double tini, tfin, texec;
+    tini = omp_get_wtime(); // Na 1a. região sequencial do programa 
     FILE *arq;
     char *nomeUm; //arquivo entrada
     char *nomeDois; //arquivo saida
-    char *result;
     FILE *arqSaida;
     int aux2=0;
     queue<int> fila; //CRIA A FILA, PARA ENVIAR A FILA É SÓ O NOME.
     bool achou = false;
     
-
    int vetInfo[10000]; //vetor com os dados do arquivo
 
     nomeUm = argv[1];
@@ -52,7 +54,6 @@ int main(int argc, char *argv[]){
 
     int grid[vetInfo[0]][vetInfo[1]]; // criar o grid com o tamanho de pos 0 e pos 1 no vetor;
      
-
     //COLOCANDO O MAXIMO INTEIRO POSSIVEL NA MATRIZ 
      for(int t=0; t < vetInfo[0];t++){
         for(int v =0; v < vetInfo[1];v++){
@@ -231,6 +232,9 @@ int main(int argc, char *argv[]){
     }
 
     fprintf(arqSaida, "%d %d", vetInfo[4], vetInfo[5]);
+    tfin = omp_get_wtime(); // Na ultima região sequencial do programa
+	texec = tfin - tini;
+	printf("Tempo de execução: %f\n", texec);
     
 
      fclose(arq);
