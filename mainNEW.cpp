@@ -165,7 +165,45 @@ int main(int argc, char *argv[]){
         }
     }
   }
-
+int menor1,menor=0;
 if(achou){
   printf("MINIMO = %d",minimo);
+    novo t = {destino};
+    queue<novo> u;
+    queue<celula> caminho;
+    u.push(t);
+    
+    while(destino.i != origem.i || destino.j != origem.j){
+        celula pt = u.front().cel;
+        menor1 = grid[pt.i][pt.j];
+        if(menor1 < menor){
+            caminho.push(pt);
+        }
+        u.pop();
+
+        for(int direcao = 0; direcao < 4; direcao++){
+            int linha = pt.i + l[direcao];
+            int coluna = pt.j + c[direcao];
+
+            if(linha == origem.i && coluna == origem.j){
+                destino.i = origem.i;
+                destino.j = origem.j;
+        }
+
+        if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1){
+            grid[linha][coluna] = grid[pt.i][pt.j]-1;
+            menor = grid[pt.i][pt.j];
+            u.push(par(linha,coluna));
+        }
+    }
+     
+
 }
+ while(!caminho.empty()){
+        celula pos = caminho.front();
+        printf("%d %d \n",pos.i,pos.j);
+        
+        caminho.pop();
+    }
+ }
+}    
