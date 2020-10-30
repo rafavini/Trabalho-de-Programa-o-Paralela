@@ -126,13 +126,21 @@ int main(int argc, char *argv[]){
         col = vetInfo[pos_col];
      
     }
+
+    bool visitado[vetInfo[0]][vetInfo[1]];
+     for(int t=0; t < vetInfo[0];t++){
+        for(int v =0; v < vetInfo[1];v++){
+            visitado[t][v] = false;
+        }
+    }
+
    //EXPANSÃO
     grid[vetInfo[2]][vetInfo[3]] = 0;//COLOCANDO 0 NA ORIGEM
    int minimo=0;
    celula origem,destino;//CRIANDO ORIGEM E DESTINO COM CAMPOS I E J
    //VETORES PARA CORRER NAS DIREÇÕES
-   int l[] = {-1,0,0,1}; 
-   int c[] = {0,-1,1,0};
+   int l[] = {-1,0,1,0}; 
+   int c[] = {0,-1,0,1};
    queue<novo> q; // CRIANDO UMA FILA ONDE CADA POSIÇÃO TEM I E J
    //CARREGANDO OS CAMPO I,J DA ORIGEM E DESTINO
    origem.i = vetInfo[2];
@@ -146,6 +154,7 @@ int main(int argc, char *argv[]){
    q.push(s);
   while(!q.empty() && achou == false ){
       celula pt = q.front().cel;
+
         
         if(pt.i == destino.i && pt.j == destino.j){
             achou = true;
@@ -157,7 +166,8 @@ int main(int argc, char *argv[]){
         int linha = pt.i + l[direcao];
         int coluna = pt.j + c[direcao];
         
-        if( grid[linha][coluna] == INT_MAX && linha >= 0 && linha <= vetInfo[0] && coluna >= 0 && coluna <= vetInfo[1]){
+        if( grid[linha][coluna] == INT_MAX && linha >= 0 && linha <= vetInfo[0] && coluna >= 0 && coluna <= vetInfo[1] && !visitado[linha][coluna]){
+            visitado[linha][coluna] = true;
             grid[linha][coluna] = grid[pt.i][pt.j] + 1;
             
             
@@ -165,19 +175,33 @@ int main(int argc, char *argv[]){
         }
     }
   }
-int menor1,menor=0;
+int menor1,menor=INT_MAX;
+bool teste[vetInfo[0]][vetInfo[1]];
+
+ for(int c=0; c < vetInfo[0];c++){
+        for(int g =0; g < vetInfo[1];g++){
+            teste[c][g] = false;
+        }
+    }
 if(achou){
-  printf("MINIMO = %d",minimo);
+  printf("MINIMO = %d\n",minimo);
     novo t = {destino};
     queue<novo> u;
     queue<celula> caminho;
     u.push(t);
+
     
     while(destino.i != origem.i || destino.j != origem.j){
         celula pt = u.front().cel;
         menor1 = grid[pt.i][pt.j];
+        
         if(menor1 < menor){
+            printf("%d %d \n ",pt.i,pt.j);
             caminho.push(pt);
+        }
+       if(pt.i == origem.i && pt.j == origem.j){
+                destino.i = origem.i;
+                destino.j = origem.j;
         }
         u.pop();
 
@@ -185,25 +209,21 @@ if(achou){
             int linha = pt.i + l[direcao];
             int coluna = pt.j + c[direcao];
 
-            if(linha == origem.i && coluna == origem.j){
+             if(pt.i == origem.i && pt.j == origem.j){
                 destino.i = origem.i;
                 destino.j = origem.j;
         }
 
-        if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1){
+        if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1 && linha>= 0 && linha < vetInfo[0] && coluna >= 0 && coluna < vetInfo[1] && !teste[linha][coluna] ){
+            teste[linha][coluna] = true;
+            // printf("pti = %d ptj = %d\n",linha ,coluna);
             grid[linha][coluna] = grid[pt.i][pt.j]-1;
+
             menor = grid[pt.i][pt.j];
             u.push(par(linha,coluna));
         }
     }
      
-
-}
- while(!caminho.empty()){
-        celula pos = caminho.front();
-        printf("%d %d \n",pos.i,pos.j);
-        
-        caminho.pop();
-    }
+  }
  }
 }    
