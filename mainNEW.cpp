@@ -1,6 +1,5 @@
-//ESTAMOS COMPILANDO COM g++ root.cpp -o root
-//LINHA DE COMANDO PARA EXECUÇÃO ./root entrada3.txt saida.txt
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <queue>
 #include <stack>
@@ -20,18 +19,10 @@ struct novo{
     int distancia;
 };
 
-novo par(int pti, int ptj){
-    novo cur;
-    cur.cel.i = pti;
-    cur.cel.j = ptj;
-    return cur;
-}
-
 
 int main(int argc, char *argv[]){
 
-  
-     // Na 1a. região sequencial do programa 
+    double tini, tfin, texec;
     FILE *arq;
     char *nomeUm; //arquivo entrada
     char *nomeDois; //arquivo saida
@@ -53,21 +44,32 @@ int main(int argc, char *argv[]){
         printf("PROBLEMA PARA ABRIR O ARQUIVO!\n");
         return 0;
     }
+    
+    
     while (!feof(arq))
     { 
        fscanf(arq,"%d",&vetInfo[aux2]); //Le o arquivo e adiciona para o vetor já tranformado para int
        aux2++;
     }
 
-    int grid[vetInfo[0]][vetInfo[1]]; // criar o grid com o tamanho de pos 0 e pos 1 no vetor;
-     
+    int taml = vetInfo[0];
+    int tamc = vetInfo[1];
+
+    int **grid = (int **)malloc(taml * sizeof(int *));
+    //int grid[vetInfo[0]][vetInfo[1]]; // criar o grid com o tamanho de pos 0 e pos 1 no vetor;
+    
+    for(int x=0; x < taml;x++){
+         grid[x] = (int *)malloc(tamc * sizeof(int));
+    }
+
+    tini = omp_get_wtime(); // Na 1a. região sequencial do programa 
     //COLOCANDO O MAXIMO INTEIRO POSSIVEL NA MATRIZ 
      for(int t=0; t < vetInfo[0];t++){
         for(int v =0; v < vetInfo[1];v++){
             grid[t][v] = INT_MAX;
         }
     }
-   
+    grid[vetInfo[2]][vetInfo[3]] = 0;//COLOCANDO 0 NA ORIGEM
     
     
     int obstaculo = vetInfo[6];//pega a quantidade de obstaculo do vetor;
@@ -126,21 +128,13 @@ int main(int argc, char *argv[]){
         col = vetInfo[pos_col];
      
     }
-
-    bool visitado[vetInfo[0]][vetInfo[1]];
-     for(int t=0; t < vetInfo[0];t++){
-        for(int v =0; v < vetInfo[1];v++){
-            visitado[t][v] = false;
-        }
-    }
-
    //EXPANSÃO
-    grid[vetInfo[2]][vetInfo[3]] = 0;//COLOCANDO 0 NA ORIGEM
+
    int minimo=0;
    celula origem,destino;//CRIANDO ORIGEM E DESTINO COM CAMPOS I E J
    //VETORES PARA CORRER NAS DIREÇÕES
-   int l[] = {-1,0,1,0}; 
-   int c[] = {0,-1,0,1};
+   int l[] = {-1,0,0,1}; 
+   int c[] = {0,-1,1,0};
    queue<novo> q; // CRIANDO UMA FILA ONDE CADA POSIÇÃO TEM I E J
    //CARREGANDO OS CAMPO I,J DA ORIGEM E DESTINO
    origem.i = vetInfo[2];
@@ -152,78 +146,119 @@ int main(int argc, char *argv[]){
    s.distancia=1; 
    //COLOCANDO ELA NA PILHA
    q.push(s);
-  while(!q.empty() && achou == false ){
-      celula pt = q.front().cel;
+ 
 
+   while(!q.empty() && achou == false){
+       novo curr = q.front();//PEGANDO O INDICE I E J DA ORIGEM E DAS POSIÇÕES ADJACENTES
+       celula pt = curr.cel; //COLOCA ESSE INDICE EM PT PARA FAZER VERIFICAÇÃO
         
-        if(pt.i == destino.i && pt.j == destino.j){
-            achou = true;
-           minimo = grid[pt.i][pt.j];
-        }
-    q.pop();
+        q.pop();//TIRA ELE DA FILA POR CAUSA QUE JÁ VISITO
+        //LAÇO PARA CRIAR OS ADJACENTES
+        for(int u = 0; u < 4; u++){
+            int linha = pt.i + l[u];
+            int coluna = pt.j + c[u];
 
-    for(int direcao = 0; direcao < 4; direcao++){
-        int linha = pt.i + l[direcao];
-        int coluna = pt.j + c[direcao];
+            if(linha == destino.i && coluna == destino.j){
+                achou = true;
+                minimo = curr.distancia;
+            }
+            if(grid[linha][coluna] == INT_MAX  ){
+                grid[linha][coluna] = curr.distancia ;//MARCA NO GRID AS EXPANSÃO
+                novo adjacente = {{linha,coluna}, curr.distancia + 1};//CRIA O ADJACENTE COM AScler POSIÇÕES CORRETAS
+                q.push(adjacente);//COLOCA ELE NA FILA  
+            }
+        }
         
-        if( grid[linha][coluna] == INT_MAX && linha >= 0 && linha <= vetInfo[0] && coluna >= 0 && coluna <= vetInfo[1] && !visitado[linha][coluna]){
-            visitado[linha][coluna] = true;
-            grid[linha][coluna] = grid[pt.i][pt.j] + 1;
-            
-            
-            q.push(par(linha,coluna));
-        }
-    }
-  }
-int menor1,menor=INT_MAX;
-bool teste[vetInfo[0]][vetInfo[1]];
-
- for(int c=0; c < vetInfo[0];c++){
-        for(int g =0; g < vetInfo[1];g++){
-            teste[c][g] = false;
-        }
-    }
-if(achou){
-  printf("MINIMO = %d\n",minimo);
-    novo t = {destino};
+   }
+  
+  printf("%d\n", minimo);
+   //BACKTRACKING
+ 
+     novo t = {destino};
     queue<novo> u;
     queue<celula> caminho;
+    int menor,menor1;//VARIAVEIS PARA COMPARAÇÃO PARA SABER QUEM DEVE IR PARA FILA
+   
+
     u.push(t);
+   if(achou){
+       while(destino.i != origem.i || destino.j != origem.j){
+            novo curr = u.front();
+            celula pt = curr.cel;
 
-    
-    while(destino.i != origem.i || destino.j != origem.j){
-        celula pt = u.front().cel;
-        menor1 = grid[pt.i][pt.j];
-        
-        if(menor1 < menor){
-            printf("%d %d \n ",pt.i,pt.j);
-            caminho.push(pt);
-        }
-       if(pt.i == origem.i && pt.j == origem.j){
+            menor1= grid[pt.i][pt.j];
+
+
+            
+            if(menor1 < menor){
+                caminho.push(pt);
+            }
+             
+            
+            //COLOCA NA FILA OS INDICE I E J 
+            //VERIFICA SE CHEGOU NA ORIGEM
+           
+             u.pop();
+           #pragma omp parallel for
+           for(int v = 0; v < 4; v++){
+                int linha = pt.i + l[v];
+                int coluna = pt.j + c[v]; 
+
+                if(pt.i == origem.i && pt.j == origem.j){
                 destino.i = origem.i;
                 destino.j = origem.j;
-        }
-        u.pop();
+            }      
+                //VERIFICA SE O ADJACENTE O VALOR É MENOR QUE O ANTERIOR NO GRID E SE NÃO É UM OBSTACULO
+                if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1  ){
+                    menor = grid[pt.i][pt.j];
+                    
+                    novo adjacente = {{linha,coluna}};
+                    u.push(adjacente);
+                    
+                }
+                
+           }
+       }
+   }
+    FILE *arqtest;
+    arqtest = fopen("grid.txt", "wt");
 
-        for(int direcao = 0; direcao < 4; direcao++){
-            int linha = pt.i + l[direcao];
-            int coluna = pt.j + c[direcao];
+    //IMPRESSÃO DO GRID EM ARQUIVO DEBUG    
+   for(int a=0;a<vetInfo[0];a++){
+       for(int b=0;b<vetInfo[1];b++){
+           fprintf(arqtest, "%d \n\t", grid[a][b]); 
+       }
+   }
 
-             if(pt.i == origem.i && pt.j == origem.j){
-                destino.i = origem.i;
-                destino.j = origem.j;
-        }
-
-        if(grid[linha][coluna] < grid[pt.i][pt.j] && grid[linha][coluna] != -1 && linha>= 0 && linha < vetInfo[0] && coluna >= 0 && coluna < vetInfo[1] && !teste[linha][coluna] ){
-            teste[linha][coluna] = true;
-            // printf("pti = %d ptj = %d\n",linha ,coluna);
-            grid[linha][coluna] = grid[pt.i][pt.j]-1;
-
-            menor = grid[pt.i][pt.j];
-            u.push(par(linha,coluna));
-        }
+    //INVERTE FILA
+   stack<celula> Stack; 
+    while (!caminho.empty()) { 
+        Stack.push(caminho.front()); 
+        caminho.pop(); 
+    } 
+    while (!Stack.empty()) { 
+        caminho.push(Stack.top()); 
+        Stack.pop(); 
     }
-     
-  }
- }
-}    
+
+   //IMPRIMIR O TAMANHO DO CAMINHO MINIMO 
+   fprintf(arqSaida,"%d\n",minimo);
+
+    //IMPRIME A FILA COM OS INDICE ATÉ A ORIGEM NO MENOR CAMINHO 
+    while(!caminho.empty()){
+        celula pos = caminho.front();
+        fprintf(arqSaida,"%d %d \n",pos.i,pos.j);
+        
+        caminho.pop();
+    }
+
+    fprintf(arqSaida, "%d %d", vetInfo[4], vetInfo[5]);
+    tfin = omp_get_wtime(); // Na ultima região sequencial do programa
+	texec = tfin - tini;
+	printf("Tempo de execução: %f\n", texec);
+    
+
+     fclose(arq);
+     fclose(arqSaida);
+     fclose(arqtest);
+}
