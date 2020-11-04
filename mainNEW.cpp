@@ -144,6 +144,7 @@ int main(int argc, char *argv[]){
             achou = true;
             minimo = grid[pt.i][pt.j];
         }else{
+            #pragma omp prallel for schedule(dynamic)
            for(int count = 0; count < 4; count++){
                int linha = pt.i + l[count];
                int coluna = pt.j + c[count];
@@ -169,6 +170,10 @@ int main(int argc, char *argv[]){
         printf("\n");
     }
     */
+
+   tfin = omp_get_wtime();
+   texec = tfin - tini;
+   printf("tempo de exec %f\n", texec);
 
     
     
