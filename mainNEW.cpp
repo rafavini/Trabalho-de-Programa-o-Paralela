@@ -32,8 +32,7 @@ bool OK(int linha, int coluna,int m, int n){
 
 int main(int argc, char *argv[]){
     //PEGANDO TEMPO INICIAL DO PROGRAMA
-     double  tini,tfin,texec;
-    tini = omp_get_wtime();
+    double  tini,tfin,texec;
 
     int i=0;
 
@@ -86,12 +85,7 @@ int main(int argc, char *argv[]){
     
     int p = vetInfo[2];
     int k = vetInfo[3];
-    bool visitado[p][k];
-    for(i = 0; i < p;i++){
-        for(j =0; j < k;j++){
-            visitado[i][j] = false;
-        }
-    }
+  
     grid[p][k] = 0;
 
     int m,n,aux,lin,col,pos_lin,pos_col,pos_m,pos_n,cont;
@@ -135,6 +129,7 @@ int main(int argc, char *argv[]){
 
     int taml = vetInfo[0];
     int tamc = vetInfo[1];
+    tini = omp_get_wtime();
     //EXP
     while(!fila.empty() && !achou){
         celula pt = fila.front();
