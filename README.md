@@ -1,4 +1,4 @@
-# Trabalho de Programação Paralela
+# Trabalho de Programação Paralela (FINALIZADO)
 Alunos: Rafael Vinicius e Calebe Lemos
 
 
