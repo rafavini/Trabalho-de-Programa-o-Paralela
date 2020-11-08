@@ -1,6 +1,6 @@
 /*
 Nomes: Rafael Vinicius e Calebe Lemos
-comando para compilação: g++ rotseq.cpp -fopenmp -o rotseq
+comando para compilação: g++ rotpar.cpp -fopenmp -o rotpar
 Comando de executação: ./rotseq entrada.txt saida.txt 
 */
 #include <stdio.h>
@@ -131,15 +131,16 @@ int main(int argc, char *argv[]){
             minimo = grid[pt.i][pt.j];
         }else{
             //INICIANDO AREA PARALELA
-            #pragma omp prallel
+            #pragma omp parallel for 
            for(int count = 0; count < 4; count++){
                int linha = pt.i + l[count];
                int coluna = pt.j + c[count];
-
+                
                if(OK(linha, coluna, taml, tamc)){
                     if(grid[linha][coluna] == max){
                         grid[linha][coluna] = grid[pt.i][pt.j] + 1;
                         celula adjacente = {linha,coluna};
+                        #pragma omp critical
                         fila.push(adjacente);
                     }
                }
